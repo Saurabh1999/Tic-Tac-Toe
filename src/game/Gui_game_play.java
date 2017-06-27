@@ -31,8 +31,10 @@ public class Gui_game_play extends javax.swing.JFrame {
     private int curr_score;
     private Component frame = null;
     private int gamecount;
+    private String color;
 
     public Gui_game_play(game_engine engine) {
+        color = "NONE";
         SoundEffect.init();
         initComponents();
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -52,8 +54,10 @@ public class Gui_game_play extends javax.swing.JFrame {
         }
         if (engine.get_IsPlayer1Turn()) {
             CurrentTurn.setText("Opponent's");
+            CurrentTurn.setForeground(new java.awt.Color(240, 84, 84));
         } else {
             CurrentTurn.setText("Your's");
+            CurrentTurn.setForeground(new java.awt.Color(51, 111, 44));
         }
         
         
@@ -464,7 +468,7 @@ public class Gui_game_play extends javax.swing.JFrame {
                             .addComponent(ResetGame, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(StartGame, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(BackToMainMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 102, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel13Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(CHOOSE_label, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -709,6 +713,7 @@ public class Gui_game_play extends javax.swing.JFrame {
         SoundEffect.CLICK.play();
         ResetBoard();
         IsGameRunning = false;
+        
 
     }//GEN-LAST:event_ResetGameActionPerformed
 
@@ -916,6 +921,7 @@ public class Gui_game_play extends javax.swing.JFrame {
         // TODO Sounadd your handling code here:
         
         if(!IsGameRunning){
+            ResetBoard();
             SoundEffect.START.play();
             if (gamecount % 2 == 0) {
                 SetPlayer2Turn();
@@ -941,11 +947,11 @@ public class Gui_game_play extends javax.swing.JFrame {
         SoundEffect.HELP.play();
         int[] bestMove = engine.findBestMove();
         if (bestMove[2] == -1) {
-            System.out.println("Game Draw");
+            System.out.println("game draw");
             JOptionPane.showMessageDialog(frame,
-                    "You can't get more than a draw");
+                    "you can't get more than a draw");
             
-        } 
+        }  
         
         else {
 
@@ -1015,18 +1021,20 @@ public class Gui_game_play extends javax.swing.JFrame {
     private void SetPlayer1Turn() {
         engine.set_IsPlayer1Turn(true);
         CurrentTurn.setText("Opponent's");
+        CurrentTurn.setForeground(new java.awt.Color(240, 84, 84));
     }
 
     private void SetPlayer2Turn() {
         engine.set_IsPlayer1Turn(false);
         CurrentTurn.setText("Your's");
+        CurrentTurn.setForeground(new java.awt.Color(51, 111, 44));
     }
 
     private void ResetBoard() {
         int i, j;
 
         engine.Board.reset();
-
+        ResetButtonColor();
         x0_y0.setText("");
         x0_y1.setText("");
         x0_y2.setText("");
@@ -1054,6 +1062,7 @@ public class Gui_game_play extends javax.swing.JFrame {
         if (curr_score > 0) {
             
             System.out.println("Player1 Wins");
+            HighlightWinningOrLoosing();
             IsGameRunning = false;
             engine.Board.printBoard();
             engine.player1.increment_total_wins();
@@ -1062,12 +1071,13 @@ public class Gui_game_play extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(frame,
                                     "YOU Lost , Your Opponent has played better than you");
             SoundEffect.LOSING.stop();
-            ResetBoard();
+           
             
 
         } else if (curr_score < 0) {
             
             System.out.println("Player2 wins");
+            HighlightWinningOrLoosing();
             engine.Board.printBoard();
             engine.player2.increment_total_wins();
             PlayerScore.setText(Integer.toString(engine.player2.get_total_wins()));
@@ -1077,7 +1087,7 @@ public class Gui_game_play extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(frame,
                                     "Hurrah,YOU Won the game");
             SoundEffect.WINNING.stop();
-            ResetBoard();
+           
 
         }
 
@@ -1085,7 +1095,7 @@ public class Gui_game_play extends javax.swing.JFrame {
             IsGameRunning = false;
             SoundEffect.DRAW.play();
             JOptionPane.showMessageDialog(frame, "Game DRAW ,It's better than loosing");
-            ResetBoard();
+           
         }
 
     }
@@ -1101,6 +1111,7 @@ public class Gui_game_play extends javax.swing.JFrame {
                 SetPlayer2Turn();
                 if (curr_score > 0) {
                     System.out.println("Player1 Wins");
+                    HighlightWinningOrLoosing();
                     IsGameRunning = false;
                     engine.Board.printBoard();
                     engine.player1.increment_total_wins();
@@ -1110,10 +1121,11 @@ public class Gui_game_play extends javax.swing.JFrame {
                                     "YOU Lost , Your Opponent has played better");
                     SoundEffect.LOSING.stop();
                     
-                    ResetBoard();
+             
 
                 } else if (curr_score < 0) {
                     System.out.println("Player1 looses");
+                    HighlightWinningOrLoosing();
                     IsGameRunning = false;
                     engine.Board.printBoard();
                     engine.player2.increment_total_wins();
@@ -1122,7 +1134,7 @@ public class Gui_game_play extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(frame,
                                     "Hurrah,YOU Won the game");
                     
-                    ResetBoard();
+               
                 }
 
                 if (!engine.IsMoveLeft()) {
@@ -1130,7 +1142,7 @@ public class Gui_game_play extends javax.swing.JFrame {
                      SoundEffect.DRAW.play();
                     JOptionPane.showMessageDialog(frame, "Game DRAW ,It's better than loosing");
                    
-                    ResetBoard();
+                 
                 }
 
             } 
@@ -1199,6 +1211,7 @@ public class Gui_game_play extends javax.swing.JFrame {
                         curr_score = engine.evaluate_score(0);
                         if (curr_score > 0) {
                             System.out.println("Player1 Wins");
+                            HighlightWinningOrLoosing();
                             engine.player1.increment_total_wins();
                             OpponentScore.setText(Integer.toString(engine.player1.get_total_wins()));
                             IsGameRunning = false;
@@ -1207,21 +1220,21 @@ public class Gui_game_play extends javax.swing.JFrame {
                             JOptionPane.showMessageDialog(frame,
                                     "YOU Lost , It's unbeatable Bro");
                             SoundEffect.LOSING.stop();
-                            ResetBoard();
+                      
 
                         } else if (curr_score < 0) {
                             System.out.println("Player1 looses");
                             IsGameRunning = false;
                             JOptionPane.showMessageDialog(frame,
                                     "This will never happen");
-                            ResetBoard();
+                       
 
                         }
                         if (!engine.IsMoveLeft()) {
                              SoundEffect.DRAW.play();
                             JOptionPane.showMessageDialog(frame, "Game DRAW ,It's better than loosing");
                             IsGameRunning = false;
-                            ResetBoard();
+                        
                            
                         }
                     }
@@ -1232,9 +1245,223 @@ public class Gui_game_play extends javax.swing.JFrame {
         }
         System.out.println("Done");
     }
-    /**
-     * @param args the command line arguments
-     */
+    
+    public int Highlight_helper(){
+        int row,col;
+        // Checking for Rows for X or O victory.
+        pieces type = pieces.emp;
+        for (row = 0; row < engine.Board.get_no_of_rows(); row++)
+        {
+            type = engine.Board.game_board[row][0];
+            for(col = 0;col < engine.Board.get_no_of_coloumns();col++){
+                if(engine.Board.game_board[row][col] != type)
+                    break;
+            }
+            
+            if(col == engine.Board.get_no_of_coloumns()){
+            
+                if(type == engine.player1.get_piece_type()){
+                    color = "RED";
+                    return row + 1;
+                }
+                else if(type == engine.player2.get_piece_type()){
+                    color = "GREEN";
+                    return row + 1;
+                }
+            }
+        }
+
+        // Checking for Columns for X or O victory.
+        for (col = 0; col < engine.Board.get_no_of_coloumns(); col++)
+        {
+            type = engine.Board.game_board[0][col];
+            for(row = 0;row < engine.Board.get_no_of_rows();row++){
+                if(engine.Board.game_board[row][col] != type)
+                    break;
+                
+            }
+            
+            if(row == engine.Board.get_no_of_rows()){
+                            
+                if(type == engine.player1.get_piece_type()){
+                    color = "RED";
+                    return engine.Board.get_no_of_rows() + col + 1;
+                }
+                else if(type == engine.player2.get_piece_type()){
+                    color = "GREEN";
+                    return engine.Board.get_no_of_rows() + col + 1;
+                }
+            }
+        }
+
+        // Checking for Diagonals for X or O victory.
+        type = engine.Board.game_board[0][0];
+        for(row = 0;row < engine.Board.get_no_of_rows();row++){
+            
+            if(engine.Board.game_board[row][row] != type)
+                break;
+            
+        }
+        if(row == engine.Board.get_no_of_rows()){
+            
+           
+            if(type == engine.player1.get_piece_type()){
+               color = "RED";
+               return 7;
+            }
+            else if(type == engine.player2.get_piece_type()){
+                color = "GREEN";
+               return 7;
+            }
+        }
+        
+        
+        row = 0;
+        col = engine.Board.get_no_of_coloumns()-1;
+        type = engine.Board.game_board[row][col];
+        while(col >= 0){
+            if(engine.Board.game_board[row][col] != type)
+                break;
+            row++;
+            col--;
+        }
+        
+        if(col < 0){
+            
+            if(type == engine.player1.get_piece_type()){
+                color = "RED";
+               return 8;
+            }
+            else if(type == engine.player2.get_piece_type()){
+                color = "GREEN";
+               return 8;
+            }
+        }
+
+        // Else if none of them have won then return 0
+        return 0; 
+        
+    }
+    
+    void HighlightWinningOrLoosing(){
+        int type = Highlight_helper();
+        if(type == 1){
+            if(color.equals("RED")){
+                x0_y0.setBackground(new java.awt.Color(244,38,38));
+                x0_y1.setBackground(new java.awt.Color(244,38,38));
+                x0_y2.setBackground(new java.awt.Color(244,38,38));
+            }
+            else{
+                x0_y0.setBackground(new java.awt.Color(73,220,82));
+                x0_y1.setBackground(new java.awt.Color(73,220,82));
+                x0_y2.setBackground(new java.awt.Color(73,220,82));
+            }
+        }
+        
+        if(type == 2){
+            if(color.equals("RED")){
+                x1_y0.setBackground(new java.awt.Color(244,38,38));
+                x1_y1.setBackground(new java.awt.Color(244,38,38));
+                x1_y2.setBackground(new java.awt.Color(244,38,38));
+            }
+            else{
+                x1_y0.setBackground(new java.awt.Color(73,220,82));
+                x1_y1.setBackground(new java.awt.Color(73,220,82));
+                x1_y2.setBackground(new java.awt.Color(73,220,82));
+            }
+        }
+        
+        if(type == 3){
+            if(color.equals("RED")){
+                x2_y0.setBackground(new java.awt.Color(244,38,38));
+                x2_y1.setBackground(new java.awt.Color(244,38,38));
+                x2_y2.setBackground(new java.awt.Color(244,38,38));
+            }
+            else{
+                x2_y0.setBackground(new java.awt.Color(73,220,82));
+                x2_y1.setBackground(new java.awt.Color(73,220,82));
+                x2_y2.setBackground(new java.awt.Color(73,220,82));
+            }
+        }
+        
+        if(type == 4){
+            if(color.equals("RED")){
+                x0_y0.setBackground(new java.awt.Color(244,38,38));
+                x1_y0.setBackground(new java.awt.Color(244,38,38));
+                x2_y0.setBackground(new java.awt.Color(244,38,38));
+            }
+            else{
+                x0_y0.setBackground(new java.awt.Color(73,220,82));
+                x1_y0.setBackground(new java.awt.Color(73,220,82));
+                x2_y0.setBackground(new java.awt.Color(73,220,82));
+            }
+        }
+        
+        if(type == 5){
+            if(color.equals("RED")){
+                x0_y1.setBackground(new java.awt.Color(244,38,38));
+                x1_y1.setBackground(new java.awt.Color(244,38,38));
+                x2_y1.setBackground(new java.awt.Color(244,38,38));
+            }
+            else{
+                x0_y1.setBackground(new java.awt.Color(73,220,82));
+                x1_y1.setBackground(new java.awt.Color(73,220,82));
+                x2_y1.setBackground(new java.awt.Color(73,220,82));
+            }
+        }
+        
+        if(type == 6){
+            if(color.equals("RED")){
+                x0_y2.setBackground(new java.awt.Color(244,38,38));
+                x1_y2.setBackground(new java.awt.Color(244,38,38));
+                x2_y2.setBackground(new java.awt.Color(244,38,38));
+            }
+            else{
+                x0_y2.setBackground(new java.awt.Color(73,220,82));
+                x1_y2.setBackground(new java.awt.Color(73,220,82));
+                x2_y2.setBackground(new java.awt.Color(73,220,82));
+            }
+        }
+        
+        if(type == 7){
+            if(color.equals("RED")){
+                x0_y0.setBackground(new java.awt.Color(244,38,38));
+                x1_y1.setBackground(new java.awt.Color(244,38,38));
+                x2_y2.setBackground(new java.awt.Color(244,38,38));
+            }
+            else{
+                x0_y0.setBackground(new java.awt.Color(73,220,82));
+                x1_y1.setBackground(new java.awt.Color(73,220,82));
+                x2_y2.setBackground(new java.awt.Color(73,220,82));
+            }
+        }
+        if(type == 8){
+            if(color.equals("RED")){
+                x0_y2.setBackground(new java.awt.Color(244,38,38));
+                x1_y1.setBackground(new java.awt.Color(244,38,38));
+                x2_y0.setBackground(new java.awt.Color(244,38,38));
+            }
+            else{
+                x0_y2.setBackground(new java.awt.Color(73,220,82));
+                x1_y1.setBackground(new java.awt.Color(73,220,82));
+                x2_y0.setBackground(new java.awt.Color(73,220,82));
+            }
+        }
+        
+    }
+    
+    void ResetButtonColor(){
+        x0_y0.setBackground(new java.awt.Color(249,249,248));
+        x0_y1.setBackground(new java.awt.Color(249,249,248));
+        x0_y2.setBackground(new java.awt.Color(249,249,248));
+        x1_y0.setBackground(new java.awt.Color(249,249,248));
+        x1_y1.setBackground(new java.awt.Color(249,249,248));
+        x1_y2.setBackground(new java.awt.Color(249,249,248));
+        x2_y0.setBackground(new java.awt.Color(249,249,248));
+        x2_y1.setBackground(new java.awt.Color(249,249,248));
+        x2_y2.setBackground(new java.awt.Color(249,249,248));
+        
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
