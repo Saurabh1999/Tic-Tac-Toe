@@ -10,6 +10,6 @@ java -jar Tic_Tac_Toe.jar
 ```
 ![main menu](images/main_menu.png) 
 ![game](images/game.png)|
-![game2](images/game2.png)
+![game2](images/game1.png)
 ![game3](images/game3.png)
 
